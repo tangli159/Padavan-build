@@ -1,5 +1,5 @@
 #修改TNAME: K2P-5.0 中的K2P-5.0为你需要编译的型号，注意名称要与configs/templates/目录下的名字相同
-name: Build Padavan
+name: Build Firmware
 
 on: 
   release:
@@ -38,7 +38,7 @@ jobs:
         mkdir -p /opt/images/
     - name: Build Firmware
       env:
-        TNAME: K2P-5.0
+        TNAME: K2P-USB-512-5.0
       run: |
         cd /opt/rt-n56u/trunk
         if [ ! -f configs/templates/$TNAME.config ] ; then
@@ -63,6 +63,16 @@ jobs:
         sed -i '/CONFIG_FIRMWARE_INCLUDE_SMARTDNS/d' .config
         sed -i '/CONFIG_FIRMWARE_INCLUDE_SRELAY/d' .config
         sed -i 's/CONFIG_FIRMWARE_INCLUDE_OPENSSL_EXE=n/CONFIG_FIRMWARE_INCLUDE_OPENSSL_EXE=y/g' .config
+        sed -i '/CONFIG_FIRMWARE_ENABLE_USB/d' .config #删除配置项USB
+        sed -i '/CONFIG_FIRMWARE_ENABLE_UFSD/d' .config #删除NTFS
+        sed -i '/CONFIG_FIRMWARE_WIFI_DRIVER=5.0.4.0/d' .config #删除WIFI驱动
+        sed -i '/CONFIG_FIRMWARE_KERNEL_CONFIG="kernel-3.4.x-5.0.config"/d' .config
+        sed -i '/CONFIG_FIRMWARE_ENABLE_IPV6/d' .config #删除IPV6
+        sed -i '/CONFIG_FIRMWARE_ENABLE_FAT/d' .config #删除FAT
+        #sed -i '/自定义项/d' .config
+        #sed -i '/自定义项/d' .config
+        #sed -i '/自定义项/d' .config
+        #sed -i '/自定义项/d' .config
         ######################################################################
         #以下选项是定义你需要的功能（y=集成,n=忽略），重新写入到.config文件
         ######################################################################
@@ -89,6 +99,16 @@ jobs:
         echo "CONFIG_FIRMWARE_INCLUDE_WYY=y" >> .config #网易云解锁
         echo "CONFIG_FIRMWARE_INCLUDE_WYYBIN=n" >> .config #网易云解锁GO版本执行文件（4M多）注意固件超大小,不集成会自动下载
         echo "CONFIG_FIRMWARE_INCLUDE_ZEROTIER=n" >> .config #zerotier ~1.3M
+        echo "CONFIG_FIRMWARE_ENABLE_USB=y" >> .config #支持USB
+        echo "CONFIG_FIRMWARE_ENABLE_UFSD=y" >> .config #支持NTFS
+        echo "CONFIG_FIRMWARE_WIFI_DRIVER=5.0.4.0=y" >> .config #支持WIFI驱动
+        echo "CONFIG_FIRMWARE_KERNEL_CONFIG="kernel-3.4.x-5.0.config"=y" >> .config
+        echo "CONFIG_FIRMWARE_ENABLE_IPV6=y" >> .config #支持IPV6
+        echo "CONFIG_FIRMWARE_ENABLE_FAT=y" >> .config #支持FAT
+        #echo "自定义项=y" >> .config
+        #echo "自定义项=y" >> .config
+        #echo "自定义项=y" >> .config
+        #echo "自定义项=y" >> .config
         #########################################################################################
         #自定义添加其它功能请参考源码configs/templates/目录下的config文件。按照上面的格式添加即可
         #格式如下：
